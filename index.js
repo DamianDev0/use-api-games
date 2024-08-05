@@ -1,6 +1,5 @@
 const container = document.getElementById('container');
 
-
 async function getGames() {
     try {
         const response = await fetch('http://localhost:3000/api/games'); 
@@ -34,4 +33,54 @@ async function getGames() {
     }
 }
 
-getGames();
+// getGames();
+
+async function loginUser() {
+    container.innerHTML = ''; // Clear the container before adding the form
+
+    const form = document.createElement('form');
+    
+    form.innerHTML = /*html*/`
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" required><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password" required><br>
+        <input type="submit" value="Submit">
+    `;
+    
+    container.appendChild(form);
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+
+        try {
+            const response = await fetch('http://localhost:3000/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email,
+                    password,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('Login successful:', result);
+            // Handle successful login (e.g., redirect or show a message)
+
+        } catch (error) {
+            console.error('Error:', error);
+            // Handle errors (e.g., show an error message)
+        }
+    });
+}
+
+// Call loginUser() to display the login form when needed
+loginUser();
